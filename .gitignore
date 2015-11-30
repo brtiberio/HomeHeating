@@ -1,4 +1,8 @@
 .crossbar/log
 .crossbar/node.pid
+<<<<<<< HEAD
 python/sqlDataPlot/templog.db
+=======
+sqlDataPlot/templog.db
+>>>>>>> 21e584e2c053c19e0fe8e3b8a28297ef16726527
 
