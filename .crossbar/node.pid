@@ -1,0 +1,20 @@
+{
+   "pid": 527,
+   "options": {
+      "reactor": null,
+      "loglevel": "info",
+      "command": "start",
+      "logdir": "/home/pi/caldeira/.crossbar/log",
+      "debug": false,
+      "config": "/home/pi/caldeira/.crossbar/config.json",
+      "cbdir": "/home/pi/caldeira/.crossbar"
+   },
+   "argv": [
+      "/usr/local/bin/crossbar",
+      "start",
+      "--cbdir",
+      "/home/pi/caldeira/.crossbar",
+      "--logdir",
+      "/home/pi/caldeira/.crossbar/log"
+   ]
+}
