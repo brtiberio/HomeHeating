@@ -114,5 +114,5 @@ class sqlPlotter(ApplicationSession):
 
 if __name__ == '__main__':
     from autobahn.twisted.wamp import ApplicationRunner
-    runner = ApplicationRunner("ws://raspberrypi2:8080/ws", "realm1")
+    runner = ApplicationRunner(url=u"ws://192.168.1.73:8080/ws", realm=u"realm1")
     runner.run(sqlPlotter)
