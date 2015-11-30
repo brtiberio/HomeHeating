@@ -1,0 +1,4 @@
+.crossbar/log
+.crossbar/node.pid
+python/sqlDataPlot/templog.db
+
