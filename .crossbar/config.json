@@ -1,6 +1,6 @@
 {
-    "controller": {
-    },
+    "version": 2,
+    "controller": {},
     "workers": [
         {
             "type": "router",
@@ -12,11 +12,19 @@
                             "name": "anonymous",
                             "permissions": [
                                 {
-                                    "uri": "*",
-                                    "publish": true,
-                                    "subscribe": true,
-                                    "call": true,
-                                    "register": true
+                                    "uri": "",
+                                    "match": "prefix",
+                                    "allow": {
+                                        "call": true,
+                                        "register": true,
+                                        "publish": true,
+                                        "subscribe": true
+                                    },
+                                    "disclose": {
+                                        "caller": false,
+                                        "publisher": false
+                                    },
+                                    "cache": true
                                 }
                             ]
                         }
@@ -45,7 +53,10 @@
         {
             "type": "guest",
             "executable": "/usr/bin/python",
-            "arguments": ["interface_python.py", "-u"],
+            "arguments": [
+                "interface_python.py",
+                "-u"
+            ],
             "options": {
                 "workdir": "/home/pi/caldeira/python/interface_python/",
                 "stdout": "log",
@@ -55,7 +66,10 @@
         {
             "type": "guest",
             "executable": "/usr/bin/python",
-            "arguments": ["sqlDataPlot.py", "-u"],
+            "arguments": [
+                "sqlDataPlot.py",
+                "-u"
+            ],
             "options": {
                 "workdir": "/home/pi/caldeira/python/sqlDataPlot/",
                 "stdout": "log",

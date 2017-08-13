@@ -212,7 +212,7 @@ class Component(ApplicationSession):
 ###############################################################################
 def pubsub_manager(queue, orders):
     from autobahn.twisted.wamp import ApplicationRunner
-    runner = ApplicationRunner(url=u"ws://192.168.1.73:8080/ws", realm=u"realm1")
+    runner = ApplicationRunner(url=u"ws://localhost:8080/ws", realm=u"realm1")
     runner.run(Component)
 
 
@@ -269,50 +269,56 @@ def reading_arduino(port, queue, orders):
 
 
 if __name__ == '__main__':
-    # Port to arduino
-    MYPORT = serial.Serial("/dev/ttyUSB0", 57600)
-    # shared variable to order exit of both processes
-    exitFlag = Value('i', 0)
-    # list to store processes info
-    jobs = []
-    multiprocessing.log_to_stderr(logging.DEBUG)
-    # Definition of queues. queue is used to store data from arduino to the
-    # publisher/subscriber orders is used to pass orders from
-    # publisher/subscriber to arduino
-    queue = multiprocessing.Queue()
-    orders = multiprocessing.Queue()
-
-    def exit_gracefully(*args):
-        print("Got a SIGTERM")
-        exitFlag.value = 1
-        return
-
     try:
-        print("main start")
-        p = multiprocessing.Process(name="arduino", target=reading_arduino,
-                                    args=(MYPORT, queue, orders))
-        p.start()
-        jobs.append(p)
-        p = multiprocessing.Process(name="PubSub", target=pubsub_manager,
-                                    args=(queue, orders))
-        p.start()
-        jobs.append(p)
-        # by now to exit gracefully just send any key
-        """ comment here!!!!
-        raw_input("Press any key to end")
-        exitFlag.value = 1
-        """
-        signal.signal(signal.SIGTERM, exit_gracefully)
-    finally:
-        # wait for processes to end their tasks
-        print("waiting for signal")
-        for item in jobs:
-            item.join()
-    # close queues used to interchange data
-    queue.close()
-    queue.join_thread()
-    orders.close()
-    orders.join_thread()
-    # close arduino port
-    MYPORT.close()
-    print("exiting now: interface_python")
+        port="/dev/ttyUSB0"
+        # Port to arduino
+        MYPORT = serial.Serial(port, 57600)
+    except serial.SerialException as e:
+        print('{}\n'.format(e))
+        sys.exit(1)
+    else:
+        # shared variable to order exit of both processes
+        exitFlag = Value('i', 0)
+        # list to store processes info
+        jobs = []
+        multiprocessing.log_to_stderr(logging.DEBUG)
+        # Definition of queues. queue is used to store data from arduino to the
+        # publisher/subscriber orders is used to pass orders from
+        # publisher/subscriber to arduino
+        queue = multiprocessing.Queue()
+        orders = multiprocessing.Queue()
+    
+        def exit_gracefully(*args):
+            print("Got a SIGTERM")
+            exitFlag.value = 1
+            return
+    
+        try:
+            print("main start")
+            p = multiprocessing.Process(name="arduino", target=reading_arduino,
+                                        args=(MYPORT, queue, orders))
+            p.start()
+            jobs.append(p)
+            p = multiprocessing.Process(name="PubSub", target=pubsub_manager,
+                                        args=(queue, orders))
+            p.start()
+            jobs.append(p)
+            # by now to exit gracefully just send any key
+            """ comment here!!!!
+            raw_input("Press any key to end")
+            exitFlag.value = 1
+            """
+            signal.signal(signal.SIGTERM, exit_gracefully)
+        finally:
+            # wait for processes to end their tasks
+            print("waiting for signal")
+            for item in jobs:
+                item.join()
+        # close queues used to interchange data
+        queue.close()
+        queue.join_thread()
+        orders.close()
+        orders.join_thread()
+        # close arduino port
+        MYPORT.close()
+        print("exiting now: interface_python")

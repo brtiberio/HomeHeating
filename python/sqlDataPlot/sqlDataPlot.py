@@ -63,7 +63,7 @@ class sqlPlotter(ApplicationSession):
         self.conn.close()
 
     def getSql(self):
-        self.c.execute('''SELECT * FROM data WHERE timestamp BETWEEN datetime('now', '-1 day') AND datetime('now')''')
+        self.c.execute('''SELECT * FROM data WHERE timestamp BETWEEN datetime('now', '-6 hours') AND datetime('now')''')
         info = self.c.fetchall()
         return info
 
@@ -114,5 +114,5 @@ class sqlPlotter(ApplicationSession):
 
 if __name__ == '__main__':
     from autobahn.twisted.wamp import ApplicationRunner
-    runner = ApplicationRunner(url=u"ws://192.168.1.73:8080/ws", realm=u"realm1")
+    runner = ApplicationRunner(url=u"ws://localhost:8080/ws", realm=u"realm1")
     runner.run(sqlPlotter)
