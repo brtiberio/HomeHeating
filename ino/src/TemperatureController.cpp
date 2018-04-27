@@ -5,7 +5,8 @@
 #include <DS1307RTC.h>
 #include <Wire.h>
 #include <LiquidTWI2.h>
-#include "myheader.h"
+#include <avr/pgmspace.h>
+#include "TemperatureController.h"
 
 // include the library code:
 // Connect via i2c, default address #0 (A0-A2 not jumpered)
@@ -127,6 +128,7 @@ void processMessage(Command msg){
         break;
     case 'o':
         state.threashold = msg.threashold; //offset from tmin to turn off heater;
+		break;
     case 's':
         send_state();
         break;
@@ -174,7 +176,8 @@ bool getDate(const char *str)
     int Day, Year;
     uint8_t monthIndex;
 
-    if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3) return false;
+	if (sscanf(str, "%s %d %d", Month, &Day, &Year) != 3)
+		return false;
     for (monthIndex = 0; monthIndex < 12; monthIndex++) {
         if (strcmp(Month, monthName[monthIndex]) == 0) break;
     }
@@ -241,36 +244,38 @@ void setup(void)
     Serial.begin(57600);
     // Start up the library
     sensors.begin();
-
+#if defined (DEBUG)
     // locate devices on the bus
-    Serial.print("Locating devices on bus 3...");
-    Serial.print("Found ");
+	Serial.println(F("Locating devices on bus 3..."));
+	Serial.print(F("Found "));
     Serial.print(sensors.getDeviceCount(), DEC);
-    Serial.println(" devices.");
+	Serial.println(F(" devices."));
 
     // report parasite power requirements
-    Serial.print("Parasite power on bus 3 is: ");
+	Serial.print(F("Parasite power on bus 3 is: "));
     if (sensors.isParasitePowerMode()) Serial.println("ON");
     else Serial.println("OFF");
     // show the addresses we found on the bus
-    Serial.print("Device 0 Address: ");
+	Serial.print(F("Device 0 Address: "));
     printAddress(Caldeira);
     Serial.println();
 
-    Serial.print("Device 1 Address: ");
+	Serial.print(F("Device 1 Address: "));
     printAddress(Cilindro);
     Serial.println();
+#endif
     // set the resolution to x bit
     sensors.setResolution(Caldeira, TEMPERATURE_PRECISION);
     sensors.setResolution(Cilindro, TEMPERATURE_PRECISION);
 
-    Serial.print("Device 0 Resolution: ");
+	Serial.print(F("Device 0 Resolution: "));
     Serial.print(sensors.getResolution(Caldeira), DEC);
     Serial.println();
 
-    Serial.print("Device 1 Resolution: ");
+	Serial.print(F("Device 1 Resolution: "));
     Serial.print(sensors.getResolution(Cilindro), DEC);
     Serial.println();
+
 
     // set the LCD type
     lcd.setMCPType(LTI_TYPE_MCP23008);
