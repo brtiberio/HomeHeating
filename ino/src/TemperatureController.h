@@ -1,3 +1,13 @@
+#ifndef DEBUG
+#define DEBUG 0
+#endif
+#if DEBUG
+#define DEBUG_MSG(...) Serial.println(__VA_ARGS__)
+#endif
+#ifndef DEBUG_MSG
+#define DEBUG_MSG(...)
+#endif
+
 typedef struct _command{
 	char command;
 	uint8_t ForceCil;
